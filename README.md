@@ -37,7 +37,7 @@ config.npmLoad('foo', 'package.json'); // default is package.json, can be anythi
 config.npmLoad('foo', '.whatever.yml.', {parse: 'yaml'});
 ```
 
-## Authors
+## Author
 
 **Jon Schlinkert**
 
