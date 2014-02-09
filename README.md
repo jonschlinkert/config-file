@@ -4,13 +4,13 @@
 
 ## Installation
 
-**Install with [npm](npmjs.org)**:
+### [npm](npmjs.org):
 
 ```bash
 npm i config-file --save
 ```
 
-**Install with [bower](https://github.com/bower/bower)**:
+### [bower](https://github.com/bower/bower):
 
 ```bash
 bower install config-file --save
@@ -22,7 +22,7 @@ bower install config-file --save
 var config = require('config-file');
 ```
 
-## config.load
+### config.load
 
 ```js
 config.load('.whateverrc'); // assumes JSON
