@@ -10,6 +10,12 @@
 npm i config-file --save
 ```
 
+**Install with [bower](https://github.com/bower/bower)**:
+
+```bash
+bower install config-file --save
+```
+
 ## Usage
 
 ```js
