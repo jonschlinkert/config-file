@@ -7,6 +7,7 @@
 
 // Dependencies
 const path   = require('path');
+const chalk  = require('chalk');
 const file   = require('fs-utils');
 const findup = require('findup-sync');
 const _      = require('lodash');
@@ -21,6 +22,9 @@ const home   = path.resolve.bind(path, env, '');
 const local  = path.resolve.bind(path, cwd, '');
 const npm    = path.resolve.bind(path, cwd, 'node_modules');
 
+
+var error = chalk.red;
+var warn = chalk.yellow;
 
 /**
  * Export `config`
@@ -42,13 +46,13 @@ config.find = function(filepath) {
   var filename = path.basename(filepath);
   var homeConfig = file.findFile(home(filename));
   var localConfig = file.findFile(local(filepath));
-  try {
+
+  if(localConfig !== null) {
     return localConfig;
-  } catch(err) {
-    if (file.exists(homeConfig)) {
-      return homeConfig;
-    }
-    return null;
+  } else if (homeConfig !== null) {
+    return homeConfig;
+  } else {
+    return;
   }
 };
 
@@ -65,8 +69,13 @@ config.find = function(filepath) {
 
 config.load = function(filename, options) {
   var opts = _.extend({parse: 'json'}, options);
-  var configFile = config.find(filename, opts);
-  return file.readDataSync(configFile, opts);
+  var config = config.find(filename, opts);
+  try {
+    return file.readDataSync(config, opts);
+  } catch(e) {
+    console.warn(warn('No config file found:'), e.message);
+    return null;
+  }
 };
 
 
@@ -93,6 +102,7 @@ config.npmLoad = function(name, configFile, options) {
   try {
     return file.readDataSync(config, opts);
   } catch (e) {
+    console.warn(warn('No npm config file found:'), e.message);
     return null;
   }
 };

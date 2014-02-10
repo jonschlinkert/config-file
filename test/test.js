@@ -14,6 +14,11 @@ describe('local config:', function () {
     var expected = {name: 'Config', description: 'A YAML config file'};
     expect(actual).to.eql(expected);
   });
+
+  it('should return null when no config file is found', function () {
+    var actual = config.load('test/fixtures/.nothingrc.yml');
+    expect(actual).to.eql(null);
+  });
 });
 
 describe('npm config:', function () {
