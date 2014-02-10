@@ -69,9 +69,9 @@ config.find = function(filepath) {
 
 config.load = function(filename, options) {
   var opts = _.extend({parse: 'json'}, options);
-  var config = config.find(filename, opts);
+  var configfile = config.find(filename, opts);
   try {
-    return file.readDataSync(config, opts);
+    return file.readDataSync(configfile, opts);
   } catch(e) {
     console.warn(warn('No config file found:'), e.message);
     return null;
