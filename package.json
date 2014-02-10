@@ -1,6 +1,6 @@
 {
   "name": "config-file",
-  "version": "0.1.2",
+  "version": "0.1.3",
   "description": "Find and load a YAML or JSON config file from a local project, installed npm module, or the user's home directory.",
   "repository": {
     "type": "git",
@@ -25,8 +25,7 @@
   "dependencies": {
     "findup-sync": "~0.1.2",
     "fs-utils": "~0.3.6",
-    "lodash": "~2.4.1",
-    "chalk": "~0.4.0"
+    "lodash": "~2.4.1"
   },
   "devDependencies": {
     "chai": "~1.9.0",

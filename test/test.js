@@ -3,7 +3,12 @@ const file = require('fs-utils');
 const config = require('../');
 
 describe('local config:', function () {
-  it('should parse the specified config file and return JSON.', function () {
+  it('should parse and load package.json when no file is specified.', function () {
+    var actual = config.load();
+    expect(actual.name).to.eql('config-file');
+  });
+
+  it('should parse and load the specified config file and return JSON.', function () {
     var actual = config.load('test/fixtures/.configrc');
     var expected = {name: 'Config', description: 'A JSON config file'};
     expect(actual).to.eql(expected);
