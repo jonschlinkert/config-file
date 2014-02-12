@@ -41,7 +41,6 @@ config.find = function(filepath) {
   var filename = path.basename(filepath);
   var homeConfig = file.findFile(home(filename));
   var localConfig = file.findFile(local(filepath || pkg));
-
   if(localConfig !== null) {
     return localConfig;
   } else if (homeConfig !== null) {
@@ -64,14 +63,17 @@ config.find = function(filepath) {
 
 config.load = function(filename, options) {
   var opts = _.extend({parse: 'json'}, options);
+  // If no filename is specified, config.find will
+  // automatically load 'package.json'
   var configfile = config.find(filename, opts);
   try {
     return file.readDataSync(configfile, opts);
   } catch(e) {
-    console.warn('\n  Unable to find: %s. config.load failed.\n', e.message);
+    console.warn('\n  Unable to find config file. config.load failed.\n', e.message);
     return null;
   }
 };
+
 
 /**
  * Searches for a config file in the
@@ -96,7 +98,7 @@ config.npmLoad = function(name, configFile, options) {
   try {
     return file.readDataSync(config, opts);
   } catch (e) {
-    console.warn('\n  Unable to find: %s. config.npmLoad failed.\n', e.message);
+    console.warn('\n  Unable to find config file. config.npmLoad failed.\n', e.message);
     return null;
   }
 };
