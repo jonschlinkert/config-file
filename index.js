@@ -21,6 +21,7 @@ const home   = path.resolve.bind(path, env, '');
 const local  = path.resolve.bind(path, cwd, '');
 const npm    = path.resolve.bind(path, cwd, 'node_modules');
 
+
 /**
  * Export `config`
  */
@@ -39,12 +40,11 @@ var config = module.exports = {};
 
 config.find = function(filepath) {
   var filename = path.basename(filepath);
-  var homeConfig = file.findFile(home(filename));
-  var localConfig = file.findFile(local(filepath || pkg));
-  if(localConfig !== null) {
-    return localConfig;
-  } else if (homeConfig !== null) {
-    return homeConfig;
+
+  if(file.findFile(local(filepath || pkg)) !== null) {
+    return file.findFile(local(filepath || pkg));
+  } else if (file.findFile(home(filename)) !== null) {
+    return file.findFile(home(filename));
   } else {
     return;
   }
@@ -62,7 +62,8 @@ config.find = function(filepath) {
  */
 
 config.load = function(filename, options) {
-  var opts = _.extend({parse: 'json'}, options);
+  var opts = _.extend({}, options);
+
   // If no filename is specified, config.find will
   // automatically load 'package.json'
   var configfile = config.find(filename, opts);
