@@ -62,13 +62,13 @@ config.find = function(filepath) {
  */
 
 config.load = function(filename, options) {
-  var opts = _.extend({}, options);
+  options = options || {};
 
   // If no filename is specified, config.find will
   // automatically load 'package.json'
-  var configfile = config.find(filename, opts);
+  var configfile = config.find(filename, options);
   try {
-    return file.readDataSync(configfile, opts);
+    return file.readDataSync(configfile, options);
   } catch(e) {
     console.warn('\n  Unable to find config file. config.load failed.\n', e.message);
     return null;

@@ -1,6 +1,6 @@
 {
   "name": "config-file",
-  "version": "0.1.5",
+  "version": "0.1.6",
   "description": "Find and load a YAML or JSON config file from a local project, installed npm module, or the user's home directory.",
   "repository": {
     "type": "git",
