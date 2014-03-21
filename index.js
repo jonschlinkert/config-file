@@ -11,6 +11,7 @@ const file   = require('fs-utils');
 const findup = require('findup-sync');
 const _      = require('lodash');
 
+
 // Defaults
 const pkg    = findup('package.json', {cwd: process.cwd()});
 const cwd    = path.dirname(pkg);
@@ -41,8 +42,8 @@ var config = module.exports = {};
 config.find = function(filepath) {
   var filename = path.basename(filepath);
 
-  if(file.findFile(local(filepath || pkg)) !== null) {
-    return file.findFile(local(filepath || pkg));
+  if(file.findFile(local(filepath || 'package.json')) !== null) {
+    return file.findFile(local(filepath || 'package.json'));
   } else if (file.findFile(home(filename)) !== null) {
     return file.findFile(home(filename));
   } else {
@@ -62,16 +63,16 @@ config.find = function(filepath) {
  */
 
 config.load = function(filename, options) {
-  options = options || {};
+  var opts = options || {};
 
   // If no filename is specified, config.find will
   // automatically load 'package.json'
-  var configfile = config.find(filename, options);
+  var configfile = config.find(filename, opts);
   try {
-    return file.readDataSync(configfile, options);
+    return file.readDataSync(configfile, opts);
   } catch(e) {
-    console.warn('\n  Unable to find config file. config.load failed.\n', e.message);
-    return null;
+    // console.warn('\n  [config-file]: Unable to find config file. config.load failed.\n', e);
+    return;
   }
 };
 
@@ -99,7 +100,7 @@ config.npmLoad = function(name, configFile, options) {
   try {
     return file.readDataSync(config, opts);
   } catch (e) {
-    console.warn('\n  Unable to find config file. config.npmLoad failed.\n', e.message);
-    return null;
+    // console.warn('\n  [config-file]: Unable to find config file. config.npmLoad failed.\n', e);
+    return;
   }
 };
