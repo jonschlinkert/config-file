@@ -35,8 +35,14 @@ var config = module.exports = {};
  * in the local project then in the
  * user's home directory.
  *
- * @param   {String}
+ * ```
+ * var filepath = config.find('.jshintrc');
+ * ```
+ *
+ * @param   {String} `filepath` Filepath to find
+ * @param   {Object} `options` Additional options to use when finding a file.
  * @returns {String} filepath to config file
+ * @api public
  */
 
 config.find = function(filepath, options) {
@@ -66,11 +72,14 @@ config.find = function(filepath, options) {
 /**
  * Parses JSON or YAML
  *
- * @param   {String} filename The name of the file to parse
- * @param   {Object} options {parse:'json'} or {parse:'yaml'}
+ * ```
+ * var obj = config.load('.jshintrc', {parse: 'yaml'});
+ * ```
  *
+ * @param   {String} `filename` The name of the file to parse
+ * @param   {Object} `options` {parse:'json'} or {parse:'yaml'}
  * @return  {Object}
- * @api Public
+ * @api public
  */
 
 config.load = function(filename, options) {
@@ -92,12 +101,11 @@ config.load = function(filename, options) {
  * Searches for a config file in the
  * specified npm module.
  *
- * @param   {String} name       Name of npm module to search
- * @param   {[type]} configFile package.json is the default
- * @param   {[type]} options    Parse options. See config.load
- *
+ * @param   {String} `name`       Name of npm module to search
+ * @param   {String} `configFile` package.json is the default
+ * @param   {Object} `options`    Parse options. See config.load
  * @returns {object} config object
- * @api Public
+ * @api public
  */
 
 config.npmLoad = function(name, configFile, options) {
