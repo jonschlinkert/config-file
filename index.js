@@ -19,8 +19,8 @@ const env    = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFI
 
 // Path variables
 const home   = path.resolve.bind(path, env, '');
-const local  = path.resolve.bind(path, cwd, '');
-const npm    = path.resolve.bind(path, cwd, 'node_modules');
+const defLocal  = path.resolve.bind(path, cwd, '');
+const defNpm    = path.resolve.bind(path, cwd, 'node_modules');
 
 
 /**
@@ -39,8 +39,19 @@ var config = module.exports = {};
  * @returns {String} filepath to config file
  */
 
-config.find = function(filepath) {
+config.find = function(filepath, options) {
+  if (typeof filepath === 'object') {
+    options = filepath;
+    filepath = null;
+  }
+  var opts = options || {};
+
   var filename = path.basename(filepath);
+  var local = defLocal;
+
+  if (typeof opts.cwd !== 'undefined') {
+    local = path.resolve.bind(path, opts.cwd, '');
+  }
 
   if(file.findFile(local(filepath || 'package.json')) !== null) {
     return file.findFile(local(filepath || 'package.json'));
@@ -90,7 +101,16 @@ config.load = function(filename, options) {
  */
 
 config.npmLoad = function(name, configFile, options) {
+  if (typeof configFile === 'object') {
+    options = configFile;
+    configFile = null;
+  }
   var opts = _.extend({parse: 'json'}, options);
+  var npm = defNpm;
+  if (typeof opts.cwd !== 'undefined') {
+    npm = path.resolve.bind(path, opts.cwd, 'node_modules');
+  }
+
   configFile = configFile || 'package.json';
   var config = file.findFile(npm(name), configFile);
 
