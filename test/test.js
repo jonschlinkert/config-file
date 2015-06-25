@@ -22,7 +22,7 @@ describe('local config:', function () {
 
   it('should return null when no config file is found', function () {
     var actual = config.load('test/fixtures/.nothingrc.yml');
-    expect(actual).to.eql(null);
+    expect(actual == null).to.be.ok;
   });
 });
 
@@ -35,6 +35,7 @@ describe('npm config:', function () {
         "curly": true,
         "eqeqeq": true,
         "eqnull": true,
+        "esnext": true,
         "immed": true,
         "latedef": true,
         "newcap": true,
