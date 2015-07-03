@@ -1,20 +1,15 @@
 {
   "name": "config-file",
-  "version": "0.1.8",
-  "description": "Find and load a YAML or JSON config file from a local project, installed npm module, or the user's home directory.",
-  "repository": {
-    "type": "git",
-    "url": "https://github.com/jonschlinkert/config-file.git"
-  },
+  "version": "0.2.0",
+  "description": "Find and load a YAML or JSON config file (like .jshintrc, package.json, bower.json etc) from either a local project, installed npm module, or the user's home directory.",
+  "homepage": "https://github.com/jonschlinkert/config-file",
+  "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
+  "repository": "jonschlinkert/config-file",
   "bugs": {
     "url": "https://github.com/jonschlinkert/config-file/issues"
   },
-  "licenses": [
-    {
-      "type": "MIT",
-      "url": "https://github.com/jonschlinkert/config-file/blob/master/LICENSE-MIT"
-    }
-  ],
+  "license": "MIT",
+  "files": ["index.js"],
   "main": "index.js",
   "scripts": {
     "test": "mocha"
@@ -23,20 +18,26 @@
     "node": ">= 0.8.0"
   },
   "dependencies": {
-    "findup-sync": "~0.1.2",
-    "fs-utils": "~0.3.6",
-    "lodash": "~2.4.1"
-  },
-  "devDependencies": {
-    "chai": "~1.9.0",
-    "mocha": "~1.17.1"
+    "extend-shallow": "^2.0.0",
+    "look-up": "^0.7.1",
+    "read-data": "^0.3.0"
   },
   "keywords": [
     "config",
-    "config file",
-    "load config",
-    "config store",
     "configuration",
-    "runtime config"
+    "detect",
+    "file",
+    "find",
+    "get",
+    "glob",
+    "json",
+    "load",
+    "look",
+    "rc",
+    "resolve",
+    "runtime",
+    "runtime-config",
+    "up",
+    "yaml"
   ]
 }

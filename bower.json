@@ -1,7 +1,36 @@
 {
   "name": "config-file",
-  "version": "0.1.8",
+  "description": "Find and load a YAML or JSON config file (like .jshintrc, package.json, bower.json etc) from either a local project, installed npm module, or the user's home directory.",
+  "repository": "jonschlinkert/config-file",
+  "license": "MIT",
+  "homepage": "https://github.com/jonschlinkert/config-file",
+  "authors": [
+    "Jon Schlinkert (https://github.com/jonschlinkert)"
+  ],
   "main": [
     "index.js"
+  ],
+  "dependencies": {
+    "extend-shallow": "^2.0.0",
+    "look-up": "^0.7.1",
+    "read-data": "^0.3.0"
+  },
+  "keywords": [
+    "config",
+    "configuration",
+    "detect",
+    "file",
+    "find",
+    "get",
+    "glob",
+    "json",
+    "load",
+    "look",
+    "rc",
+    "resolve",
+    "runtime",
+    "runtime-config",
+    "up",
+    "yaml"
   ]
 }

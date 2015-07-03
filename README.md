@@ -1,6 +1,6 @@
 # config-file [![NPM version](https://badge.fury.io/js/config-file.png)](http://badge.fury.io/js/config-file)
 
-> Find and load a YAML or JSON config file from a local project, installed npm module, or the user's home directory.
+> Find and load a YAML or JSON config file (like .jshintrc, package.json, bower.json etc) from either a local project, installed npm module, or the user's home directory.
 
 ## Installation
 
