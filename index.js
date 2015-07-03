@@ -1,87 +1,138 @@
+'use strict';
+
 /**
  * Module dependencies
  */
 
-const fs   = require('fs');
-const path   = require('path');
-const lookup = require('look-up');
-const read   = require('read-data');
-const extend = require('extend-shallow');
-
-// Defaults
-const pkg = lookup('package.json', { cwd: process.cwd() });
-const cwd = path.dirname(pkg);
-const env = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
-
-// Path variables
-const home     = path.resolve.bind(path, env);
-const localFn = path.resolve.bind(path, cwd);
-const npmFn   = path.resolve.bind(path, cwd, 'node_modules');
+var path = require('path');
+var globalDir = require('global-modules');
+var extend = require('extend-shallow');
+var lookup = require('look-up');
+var read = require('read-data');
+var homedir = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFILE;
 
 /**
- * Expose `config`
- */
-
-var config = module.exports;
-
-/**
- * Searches for a config file, first
- * in the local project then in the
- * user's home directory.
+ * Returns an object from parsing JSON or YAML from the given
+ * config file. Uses `config.resovle` to resolve the filepath.
+ * If no filepath is specified, `config.resolve` falls back to
+ * 'package.json'
  *
  * ```js
- * var filepath = config.find('.jshintrc');
+ * var opts = config('.jshintrc');
  * ```
- * @param   {String} `filepath` Filepath to find
- * @param   {Object} `options` Additional options to use when finding a file.
- * @returns {String} filepath to config file
- * @api public
- */
-
-config.find = function(filepath, options) {
-  if (typeof filepath === 'object') {
-    options = filepath;
-    filepath = null;
-  }
-
-  var opts = options || {};
-  var basename = filepath ? path.basename(filepath) : '';
-  var local = localFn;
-
-  if (typeof opts.cwd !== 'undefined') {
-    local = path.resolve.bind(path, opts.cwd);
-  }
-
-  var fp = local(filepath || 'package.json');
-  if (fs.existsSync(fp)) {
-    return fp;
-  }
-
-  fp = home(basename);
-  if (fs.existsSync(fp)) {
-    return fp;
-  }
-  return null;
-};
-
-/**
- * Parses JSON or YAML
- *
- * ```js
- * var obj = config.load('.jshintrc', {parse: 'yaml'});
- * ```
- * @param {String} `basename` The name of the file to parse
+ * @param {String} `filename` The name of the file to parse
  * @param {Object} `options` Optionally specify `{parse:'json'}` or `{parse:'yaml'}`
  * @return {Object}
  * @api public
  */
 
-config.load = function(basename, options) {
-  var opts = options || {};
+function config(filename, options) {
+  return config.parse(filename, options);
+}
 
-  // If no filepath is specified, config.find will
-  // automatically load 'package.json'
-  var fp = config.find(basename, opts);
+/**
+ * Parse a config file located in a locally installed npm
+ * package (in `node_modules`).
+ *
+ * ```js
+ * var data = config.npm('read-data', 'package.json');
+ * //=> { name: "read-data", ... }
+ * ```
+ * @param {String} `moduleName` The name of the npm package to search in `node_modules`
+ * @param {String} `filename` Name of the file to find.
+ * @param {Object} `options`
+ * @api public
+ */
+config.npm = function npmConfig(moduleName, filename, opts) {
+  if (typeof filename === 'object') {
+    opts = filename;
+    filename = null;
+  }
+
+  opts = opts || {};
+  opts.cwd = path.resolve('node_modules', opts.cwd || '', moduleName);
+  return config.parse(filename, opts);
+};
+
+/**
+ * Parse a config file in a globally installed npm package.
+ *
+ * ```js
+ * var data = config.global('verb-cli', 'package.json');
+ * //=> { name: "verb-cli", ... }
+ * ```
+ * @param {String} `moduleName` The name of the global module to search
+ * @param {String} `filename` Name of the file to find.
+ * @param {Object} `options`
+ * @api public
+ */
+
+config.global = function globalConfig(moduleName, filename, opts) {
+  if (typeof filename === 'object') {
+    opts = filename;
+    filename = null;
+  }
+
+  opts = opts || {};
+  opts.cwd = path.resolve(globalDir, opts.cwd || '', moduleName);
+  return config.parse(filename, opts);
+};
+
+/**
+ * Return a filepath the user's home directory
+ *
+ * ```js
+ * var data = config.home('.jshintrc');
+ * ```
+ * @param {String} `filepath` Filepath to find
+ * @param {Object} `options`
+ * @api public
+ */
+
+config.home = function homeConfig(filename) {
+  return config.parse(filename, { cwd: homedir });
+};
+
+/**
+ * Returns the fully resolve path for the specified config file.
+ * Searches the local project first, then the user's home directory.
+ *
+ * ```js
+ * var fp = config.resolve('.jshintrc');
+ * //=> '/Users/jonschlinkert/dev/config-file/package.json'
+ * ```
+ * @param   {String} `filepath` Filepath to find
+ * @param   {Object} `options`
+ * @returns {String} filepath to config file
+ * @api public
+ */
+
+config.resolve = function resolveConfig(filename, options) {
+  if (typeof filename === 'object') {
+    options = filename;
+    filename = null;
+  }
+  var opts = extend({cwd: process.cwd()}, options);
+  filename = filename || 'package.json';
+  return lookup(filename, opts);
+};
+
+/**
+ * Parse a config file. Same as using `config()`.
+ *
+ * ```js
+ * var data = config.parse('.jshintrc');
+ * ```
+ * @param  {String} `filename` Name of the file to parse.
+ * @param  {Object} `options`
+ * @return {Object}
+ * @api public
+ */
+
+config.parse = function parseConfig(filename, options) {
+  filename = filename || 'package.json';
+  var opts = extend({ parse: type(filename, options) }, options);
+  var fp = config.resolve(filename, opts);
   try {
     return read.data.sync(fp, opts);
   } catch (err) {}
@@ -89,37 +140,25 @@ config.load = function(basename, options) {
 };
 
 /**
- * Searches for a config file in the specified npm module.
+ * Detect the type to parse, JSON or YAML. Sometimes this is based on file extension,
+ * other times it must be specified on the options.
  *
- * @param   {String} `name` Name of npm module to search
- * @param   {String} `filename` Config file name. package.json is the default
- * @param   {Object} `options` Parse options. See config.load
- * @returns {Object} config object
- * @api public
+ * @param  {String} `filename`
+ * @param  {Object} `opts` If `filename` does not have an extension, specify the type on the `parse` option.
+ * @return {String} The type to parse.
  */
 
-config.npmLoad = function(moduleName, filename, options) {
-  if (typeof filename === 'object') {
-    options = filename;
-    filename = null;
+function type(filename, opts) {
+  opts = opts || {};
+  if (opts.parse && typeof opts.parse === 'string') {
+    return opts.parse;
   }
+  var ext = path.extname(filename);
+  return ext || 'json';
+}
 
-  var opts = extend({parse: 'json'}, options);
-  var npm = npmFn;
+/**
+ * Expose `config`
+ */
 
-  if (typeof opts.cwd !== 'undefined') {
-    npm = path.resolve.bind(path, opts.cwd, 'node_modules');
-  }
-
-  filename = filename || 'package.json';
-  var fp = path.join(npm(moduleName), filename);
-
-  if (!fs.existsSync(fp)) {
-    return null;
-  }
-
-  try {
-    return read.data.sync(fp, opts);
-  } catch (err) {}
-  return null;
-};
+module.exports = config;
