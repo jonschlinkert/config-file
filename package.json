@@ -1,6 +1,6 @@
 {
   "name": "config-file",
-  "version": "0.2.0",
+  "version": "0.3.0",
   "description": "Find and load a YAML or JSON config file (like .jshintrc, package.json, bower.json etc) from either a local project, installed npm module, or the user's home directory.",
   "homepage": "https://github.com/jonschlinkert/config-file",
   "author": "Jon Schlinkert (https://github.com/jonschlinkert)",
@@ -9,7 +9,9 @@
     "url": "https://github.com/jonschlinkert/config-file/issues"
   },
   "license": "MIT",
-  "files": ["index.js"],
+  "files": [
+    "index.js"
+  ],
   "main": "index.js",
   "scripts": {
     "test": "mocha"
@@ -19,6 +21,7 @@
   },
   "dependencies": {
     "extend-shallow": "^2.0.0",
+    "global-modules": "^0.1.0",
     "look-up": "^0.7.1",
     "read-data": "^0.3.0"
   },
