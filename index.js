@@ -19,8 +19,8 @@ const env    = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFI
 
 // Path variables
 const home   = path.resolve.bind(path, env, '');
-const local  = path.resolve.bind(path, cwd, '');
-const npm    = path.resolve.bind(path, cwd, 'node_modules');
+const defLocal  = path.resolve.bind(path, cwd, '');
+const defNpm    = path.resolve.bind(path, cwd, 'node_modules');
 
 
 /**
@@ -35,12 +35,29 @@ var config = module.exports = {};
  * in the local project then in the
  * user's home directory.
  *
- * @param   {String}
+ * ```
+ * var filepath = config.find('.jshintrc');
+ * ```
+ *
+ * @param   {String} `filepath` Filepath to find
+ * @param   {Object} `options` Additional options to use when finding a file.
  * @returns {String} filepath to config file
+ * @api public
  */
 
-config.find = function(filepath) {
+config.find = function(filepath, options) {
+  if (typeof filepath === 'object') {
+    options = filepath;
+    filepath = null;
+  }
+  var opts = options || {};
+
   var filename = path.basename(filepath);
+  var local = defLocal;
+
+  if (typeof opts.cwd !== 'undefined') {
+    local = path.resolve.bind(path, opts.cwd, '');
+  }
 
   if(file.findFile(local(filepath || 'package.json')) !== null) {
     return file.findFile(local(filepath || 'package.json'));
@@ -55,11 +72,14 @@ config.find = function(filepath) {
 /**
  * Parses JSON or YAML
  *
- * @param   {String} filename The name of the file to parse
- * @param   {Object} options {parse:'json'} or {parse:'yaml'}
+ * ```
+ * var obj = config.load('.jshintrc', {parse: 'yaml'});
+ * ```
  *
+ * @param   {String} `filename` The name of the file to parse
+ * @param   {Object} `options` {parse:'json'} or {parse:'yaml'}
  * @return  {Object}
- * @api Public
+ * @api public
  */
 
 config.load = function(filename, options) {
@@ -81,16 +101,24 @@ config.load = function(filename, options) {
  * Searches for a config file in the
  * specified npm module.
  *
- * @param   {String} name       Name of npm module to search
- * @param   {[type]} configFile package.json is the default
- * @param   {[type]} options    Parse options. See config.load
- *
+ * @param   {String} `name`       Name of npm module to search
+ * @param   {String} `configFile` package.json is the default
+ * @param   {Object} `options`    Parse options. See config.load
  * @returns {object} config object
- * @api Public
+ * @api public
  */
 
 config.npmLoad = function(name, configFile, options) {
+  if (typeof configFile === 'object') {
+    options = configFile;
+    configFile = null;
+  }
   var opts = _.extend({parse: 'json'}, options);
+  var npm = defNpm;
+  if (typeof opts.cwd !== 'undefined') {
+    npm = path.resolve.bind(path, opts.cwd, 'node_modules');
+  }
+
   configFile = configFile || 'package.json';
   var config = file.findFile(npm(name), configFile);
 
