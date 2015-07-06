@@ -58,12 +58,27 @@ describe('config.npm():', function () {
   });
 
   it('should find the config file from a cwd.', function () {
-    var actual = config.npm('is-glob', 'package.json', {cwd: 'look-up/node_modules'});
+    var actual = config.npm('verb-default', 'package.json', {
+      cwd: path.join(config.globalDir, 'verb-cli')
+    });
+    assert.equal(actual.name, 'verb-default');
+  });
+
+  it('should find the config file from a base and cwd.', function () {
+    var actual = config.npm('gulp-util', 'package.json', {
+      cwd: path.join(config.globalDir, 'verb-cli'),
+      base: 'verb-default/node_modules'
+    });
+    assert.equal(actual.name, 'gulp-util');
+  });
+
+  it('should find the config file from a base.', function () {
+    var actual = config.npm('is-glob', 'package.json', {base: 'look-up/node_modules'});
     assert.equal(actual.name, 'is-glob');
   });
 
   it('should use package.json by default.', function () {
-    var actual = config.npm('read-yaml', {cwd: 'read-data/node_modules'});
+    var actual = config.npm('read-yaml', {base: 'read-data/node_modules'});
     assert.equal(actual.name, 'read-yaml');
   });
 });

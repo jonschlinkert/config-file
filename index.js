@@ -31,6 +31,12 @@ function config(filename, options) {
 }
 
 /**
+ * Expose `globalDir`
+ */
+
+config.globalDir = globalDir;
+
+/**
  * Parse a config file located in a locally installed npm
  * package (in `node_modules`).
  *
@@ -43,6 +49,7 @@ function config(filename, options) {
  * @param {Object} `options`
  * @api public
  */
+
 config.npm = function npmConfig(moduleName, filename, opts) {
   if (typeof filename === 'object') {
     opts = filename;
@@ -50,7 +57,8 @@ config.npm = function npmConfig(moduleName, filename, opts) {
   }
 
   opts = opts || {};
-  opts.cwd = path.resolve('node_modules', opts.cwd || '', moduleName);
+  var base = path.join('node_modules', opts.base || '', moduleName);
+  opts.cwd = path.resolve(opts.cwd || '', base);
   return config.parse(filename, opts);
 };
 
@@ -89,8 +97,10 @@ config.global = function globalConfig(moduleName, filename, opts) {
  * @api public
  */
 
-config.home = function homeConfig(filename) {
-  return config.parse(filename, { cwd: homedir });
+config.home = function homeConfig(filename, opts) {
+  opts = opts || {};
+  var cwd = path.join(homedir, opts.cwd || '');
+  return config.parse(filename, { cwd: cwd });
 };
 
 /**
