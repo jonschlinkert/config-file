@@ -13,7 +13,7 @@ var homedir = process.env.HOME || process.env.HOMEPATH || process.env.USERPROFIL
 
 /**
  * Returns an object from parsing JSON or YAML from the given
- * config file. Uses `config.resovle` to resolve the filepath.
+ * config file. Uses `config.resolve` to resolve the filepath.
  * If no filepath is specified, `config.resolve` falls back to
  * 'package.json'
  *
